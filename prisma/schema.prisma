@@ -1,0 +1,28 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Receipt {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   // <--- REQUIRED: Links this receipt to a Clerk user
+  
+  merchant    String
+  date        DateTime
+  total       String   // Changed to String to match your frontend input
+  category    String   @default("Uncategorized")
+  status      String   @default("processed") 
+  confidence  Float    @default(0.0)
+  
+  // Using Json type is faster/easier for MongoDB receipt items
+  items       Json     
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
